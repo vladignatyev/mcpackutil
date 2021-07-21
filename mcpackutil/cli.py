@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import sys
 from pathlib import Path
 from zipfile import ZipFile
@@ -11,11 +10,16 @@ import click as click
 from mcpackutil import dotminecraft, extractor
 from mcpackutil.is_pack import is_pack
 
+v_major = "1"
+v_min = "0"
+v_patch = "0"
 
-@click.group("packutil")
-def main():
-    # Stub
-    pass
+
+@click.group("packutil", invoke_without_command=True)
+@click.option("-v", "--version", "v", is_flag=True)
+def main(v):
+    if v:
+        print(f"{v_major}.{v_min}.{v_patch}")
 
 
 @main.command()
