@@ -18,12 +18,12 @@ spec := './'
 script := 'cli'
 
 name := 'mcpackutil'
-version := '1.0.0'
+version := '1.0.1'
 
 icon_sizes_win := '256'
 icon_sizes_mac := '16 32 48 128 256 512'
-icon_temp_name := 'Phantom_JE1.png'
-icon_url := 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a6/' + icon_temp_name + '/revision/latest'
+icon_temp_name := 'Bucket_of_Axolotl_%28pre-release%29.png'
+icon_url := 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/' + icon_temp_name + '/revision/latest'
 icon_name := 'favicon'
 icon_destination := download + "/icon/" + icon_temp_name
 icon_final := dist + "/icon/"+ icon_name
@@ -77,6 +77,7 @@ _resize_icon size="256":
 
 	if [ {{ os() }} != "windows" ]; then
 		convert "{{ icon_destination }}" \
+		            -filter point \
 					-resize "{{ size }}x{{ size }}" \
 					-background none \
 					-gravity center \
@@ -84,6 +85,7 @@ _resize_icon size="256":
 					"{{ build }}/icon/{{ size }}.png"
 	else
 		magick convert "{{ icon_destination }}" \
+		            -filter point \
 					-resize "{{ size }}x{{ size }}" \
 					-background none \
 					-gravity center \

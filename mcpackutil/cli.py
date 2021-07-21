@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -12,12 +11,18 @@ from mcpackutil.is_pack import is_pack
 
 v_major = "1"
 v_min = "0"
-v_patch = "0"
+v_patch = "1"
 
 
 @click.group("packutil", invoke_without_command=True)
 @click.option("-v", "--version", "v", is_flag=True)
-def main(v):
+@click.option("-d", "--debug", "d", is_flag=True)
+@click.pass_context
+def main(ctx, v, d):
+    ctx.obj = {
+        "d": d
+    }
+
     if v:
         print(f"{v_major}.{v_min}.{v_patch}")
 
@@ -72,12 +77,13 @@ def extract(ctx, v, o, i):
         o = "~/Documents"
 
     ctx.obj = {
+        "d": ctx.obj["d"],
         "v": v,
         "o": o
     }
 
     if i:
-        extractor.asset(ctx.obj["v"], ctx.obj["o"], "icons")
+        extractor.asset(ctx.obj["v"], ctx.obj["o"], lambda s: print(s) if ctx.obj["d"] else '', "icons")
 
 
 @extract.command()
@@ -85,7 +91,7 @@ def extract(ctx, v, o, i):
 @click.pass_context
 def version(ctx, f):
     """Extract the assets of a local Minecraft version"""
-    extractor.pack(ctx.obj["v"], ctx.obj["o"], f)
+    extractor.pack(ctx.obj["v"], ctx.obj["o"], lambda s: print(s) if ctx.obj["d"] else '', f)
 
 
 @extract.group()
@@ -115,7 +121,7 @@ def minecraft(ctx, i, l, s):
     if s or not i and not l:
         r.append(f"{p}/sounds")
 
-    extractor.asset(ctx.obj["v"], ctx.obj["o"], *r)
+    extractor.asset(ctx.obj["v"], ctx.obj["o"], lambda s: print(s) if ctx.obj["d"] else '', *r)
 
 
 @asset.command()
@@ -133,7 +139,7 @@ def realms(ctx, l, t):
     if t or not l:
         r.append(f"{p}/textures")
 
-    extractor.asset(ctx.obj["v"], ctx.obj["o"], *r)
+    extractor.asset(ctx.obj["v"], ctx.obj["o"], lambda s: print(s) if ctx.obj["d"] else '', *r)
 
 
 if __name__ == "__main__":

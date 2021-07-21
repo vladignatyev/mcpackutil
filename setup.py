@@ -4,7 +4,7 @@ name = "mcpackutil"
 
 setup(
     name=name,
-    version="1.0.0",
+    version="1.0.1",
     description="A CLI and library for working with Minecraft resource packs",
     author="DeflatedPickle",
     url="https://github.com/DeflatedPickle/mcpackutil",

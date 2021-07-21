@@ -10,7 +10,7 @@ from mcpackutil import dotminecraft
 from mcpackutil.is_pack import is_pack
 
 
-def pack(version: str, output: str, folders: list[str]):
+def pack(version: str, output: str, func, folders: list[str]):
     """Extracts a Minecraft resource pack from your .minecraft"""
     mc = f"{dotminecraft.versions}/{version}/{version}.jar"
 
@@ -24,9 +24,10 @@ def pack(version: str, output: str, folders: list[str]):
                         continue
                     else:
                         zf.extract(file, f"{expanded}/{version}")
+                        func(f"{version}/{file}")
 
 
-def asset(version: str, output: str, *resource: str):
+def asset(version: str, output: str, func, *resource: str):
     expanded = os.path.expanduser(os.path.expandvars(output))
 
     ver = -1
@@ -53,4 +54,5 @@ def asset(version: str, output: str, *resource: str):
                     pass
 
                 shutil.copy2(source, destination)
+                func(f"{version}/assets/{k}")
 
