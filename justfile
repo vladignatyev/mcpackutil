@@ -1,12 +1,22 @@
 #!/usr/bin/env just --justfile
 
+alias c := clean
+alias u := usage
 alias h := usage
 alias help := usage
+alias r := readme
+alias rm := readme
 alias i := readme
 alias info := readme
 alias l := license
+alias b := build
 alias bl := build-lib
 alias be := build-exe
+alias il := install-lib
+alias t := test
+alias up := upload
+alias v := version
+alias n := name
 
 export PYTHONOPTIMIZE := "1"
 
@@ -17,13 +27,17 @@ build := './build'
 spec := './'
 script := 'cli'
 
-name := 'mcpackutil'
-version := '1.0.1'
+name := `echo "${PWD##*/}"`
+# Waiting on #822
+# version := `python3 {{ name }}/{{ script }}.py -v`
+version := `python3 mcpackutil/cli.py -v`
 
 icon_sizes_win := '256'
 icon_sizes_mac := '16 32 48 128 256 512'
 icon_temp_name := 'Bucket_of_Axolotl_%28pre-release%29.png'
-icon_url := 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/' + icon_temp_name + '/revision/latest'
+icon_letter := 'c'
+icon_index := '2'
+icon_url := 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/' + icon_letter + '/' + icon_letter + icon_index + '/' + icon_temp_name + '/revision/latest'
 icon_name := 'favicon'
 icon_destination := download + "/icon/" + icon_temp_name
 icon_final := dist + "/icon/"+ icon_name
@@ -34,15 +48,15 @@ split := if os() == "windows" { ';' } else { ':' }
 default:
 	@just --list --unsorted
 
-clean:
-    rm -rfv ./dist/*
+clean: _make_temp_dir
+    @rm -rfv {{ dist }}*
 
 _requirements:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 # shows how to use phantom
 usage:
-	@src/cli.py -h
+	@{{ name }}/{{ script }}.py -h
 
 # shows the readme file
 readme:
@@ -52,18 +66,24 @@ readme:
 license:
 	@cat LICENSE
 
+version:
+	@{{ name }}/{{ script }}.py -v
+
+name:
+	@{{ name }}/{{ script }}.py -n
+
 # count non-empty lines of code
 sloc:
-	@cat src/*.py | sed '/^\s*$/d' | wc -l
+	@cat {{ name }}/*.py | sed '/^\s*$/d' | wc -l
 
 # makes the temporary directory
-_make_temp_dir:
+@_make_temp_dir:
 	-mkdir -p {{ build }}/icon
 	-mkdir -p {{ dist }}/icon
 	-mkdir -p {{ download }}/icon
 
 # downloads the icon then runs _gen_icons
-_download_icon: _make_temp_dir
+@_download_icon: _make_temp_dir
 	curl {{ icon_url }} -o {{ icon_destination }}
 
 # resizes a given image
@@ -128,17 +148,17 @@ _make_icns: _gen_icons
 
 # builds the library using the setup file
 build-lib: _requirements clean
-    python3 setup.py sdist bdist_wheel
+    @python3 setup.py sdist bdist_wheel
 
 install-lib: build-lib
-    pip install -e ./
+    @pip3 install -e ./
 
 test: install-lib
     packutil extract version
     packutil extract asset
 
 upload: build-lib
-    twine upload dist/*
+    @twine upload dist/*
 
 # runs the pyinstaller build
 build-exe label=(name) type='file' level='INFO' debug='' upx='true': _requirements

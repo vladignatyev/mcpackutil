@@ -3,3 +3,4 @@ setuptools~=57.1.0
 wheel
 twine
 pyinstaller
+repackage~=0.7.3

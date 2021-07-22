@@ -1,37 +1,55 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+import repackage
+
+repackage.up()
 
 from pathlib import Path
 from zipfile import ZipFile
 
 import click as click
 
-from mcpackutil import dotminecraft, extractor
-from mcpackutil.is_pack import is_pack
+from mcpackutil import dotminecraft, extractor, is_pack
+
+author = "deflatedpickle"
+name = "mcpackutil"
 
 v_major = "1"
 v_min = "0"
-v_patch = "1"
+v_patch = "2"
 
 
-@click.group("packutil", invoke_without_command=True)
+def _fversion():
+    return f"{v_major}.{v_min}.{v_patch}"
+
+
+@click.group(name, invoke_without_command=True, context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option("-v", "--version", "v", is_flag=True)
+@click.option("-n", "--name", "n", is_flag=True)
+@click.option("-a", "--author", "a", is_flag=True)
 @click.option("-d", "--debug", "d", is_flag=True)
 @click.pass_context
-def main(ctx, v, d):
+def main(ctx, v, n, a, d):
     ctx.obj = {
         "d": d
     }
 
     if v:
-        print(f"{v_major}.{v_min}.{v_patch}")
+        print(_fversion())
+
+    if n:
+        print(name)
+
+    if a:
+        print(author)
 
 
 @main.command()
 @click.option("-i", "--input", "i", type=click.Path(exists=True))
 def valid(i):
     """Validate if a folder or .zip is a resource pack"""
-    click.echo(is_pack(i))
+    click.echo(is_pack.is_pack(i))
 
 
 @main.command()

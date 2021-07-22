@@ -1,13 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from setuptools import setup
 
-name = "mcpackutil"
+from mcpackutil.cli import _fversion, name, author
 
 setup(
     name=name,
-    version="1.0.1",
+    version=_fversion(),
     description="A CLI and library for working with Minecraft resource packs",
-    author="DeflatedPickle",
-    url="https://github.com/DeflatedPickle/mcpackutil",
+    author=author,
+    url=f"https://github.com/{author}/{name}",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
@@ -22,7 +25,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "mcpackutil=mcpackutil.cli:main"
+            f"{name}={name}.cli:main"
         ]
     }
 )
