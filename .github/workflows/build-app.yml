@@ -4,8 +4,6 @@ on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   build:
-    continue-on-error: true
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,6 +42,7 @@ jobs:
           user: ${{ secrets.PYPI_USERNAME }}
           password: ${{ secrets.PYPI_PASSWORD }}
           verify_metadata: false
+        continue-on-error: true
 
       - name: Install Chocolatey
         uses: crazy-max/ghaction-chocolatey@v1.4.0
@@ -72,8 +71,8 @@ jobs:
           path: ./dist/
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
           files: ./dist/${{ steps.repo-name.outputs.value }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
