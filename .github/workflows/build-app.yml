@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
-        export: [file, dir]
+        export: [ file, dir ]
 
     name: Create ${{ matrix.os }} executable
 
@@ -73,6 +73,7 @@ jobs:
         with:
           name: ${{ steps.repo-name.outputs.value }}-${{ matrix.os }}
           path: ./dist/
+        continue-on-error: true
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
