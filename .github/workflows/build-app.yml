@@ -8,6 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
+        export: [file, dir]
 
     name: Create ${{ matrix.os }} executable
 
@@ -61,8 +62,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build Library
+        run: "just build-lib"
+
       - name: Build Application
-        run: "just build"
+        run: "just build-exe ${{ steps.repo-name.outputs.value }}-${{ matrix.os }} ${{ matrix.export }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
