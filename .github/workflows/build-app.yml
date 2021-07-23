@@ -8,7 +8,6 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
-        export: [ file, dir ]
 
     name: Create ${{ matrix.os }} executable
 
@@ -63,10 +62,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Library
+        if: matrix.os == 'ubuntu-latest'
         run: "just build-lib"
+        continue-on-error: true
 
-      - name: Build Application
-        run: "just build-exe ${{ steps.repo-name.outputs.value }}-${{ matrix.os }} ${{ matrix.export }}"
+      - name: Build Application File
+        run: "just build-exe ${{ steps.repo-name.outputs.value }} file"
+        continue-on-error: true
+
+      - name: Build Application Directory
+        run: "just build-exe ${{ steps.repo-name.outputs.value }}-${{ matrix.os }} dir"
+        continue-on-error: true
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
@@ -79,6 +85,6 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: "${{ matrix.os }}"
           prerelease: true
           files: ./dist/*
